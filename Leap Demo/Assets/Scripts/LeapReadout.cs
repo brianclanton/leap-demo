@@ -3,7 +3,10 @@ using System.Collections;
 using Leap;
 
 public class LeapReadout : MonoBehaviour {
-	Controller controller;
+
+	public GUIText test;
+
+	private Controller controller;
 
 	// Use this for initialization
 	void Start () {
@@ -13,6 +16,6 @@ public class LeapReadout : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		Frame frame = controller.Frame();
-
+		test.text = "" + Time.deltaTime;
 	}
 }
