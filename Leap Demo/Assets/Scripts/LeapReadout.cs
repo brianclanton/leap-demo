@@ -7,8 +7,9 @@ public class LeapReadout : MonoBehaviour {
 	public GUIText readoutPrefab;
 
 	private GUIText controllerStatus;
-	private GUIText test1;
-	private GUIText test2;
+	private GUIText hands;
+	private GUIText fingers;
+	private GUIText pointables;
 
 	private float baseOffsetX = 0.95f;
 	private float baseOffsetY = 0.95f;
@@ -22,8 +23,9 @@ public class LeapReadout : MonoBehaviour {
 	void Start () {
 		controller = new Controller();
 		controllerStatus = transform.Find("ControllerStatus").GetComponent<GUIText>();
-		test1 = transform.Find("Test1").GetComponent<GUIText>();
-		test2 = transform.Find("Test2").GetComponent<GUIText>();
+		hands = transform.Find("Hands").GetComponent<GUIText>();
+		fingers = transform.Find("Fingers").GetComponent<GUIText>();
+		pointables = transform.Find("Pointables").GetComponent<GUIText>();
 	}
 	
 	// Update is called once per frame
@@ -39,10 +41,11 @@ public class LeapReadout : MonoBehaviour {
 
 		if (isConnected) {
 			Frame frame = controller.Frame();
-		}
 
-		fps.text = "" + Time.deltaTime;
-		test1.text = "" + Time.frameCount;
-		test2.text = "" + Time.realtimeSinceStartup;
+			// Update GUIText
+			hands.text = (frame.Hands.Count == 0 ? "No" : "" + frame.Hands.Count) + " hands detected";
+			fingers.text = (frame.Fingers.Count == 0 ? "No" : "" + frame.Fingers.Count) + " fingers detected";
+			pointables.text = (frame.Pointables.Count == 0 ? "No" : "" + frame.Pointables.Count) + " pointables detected";
+		}
 	}
 }
