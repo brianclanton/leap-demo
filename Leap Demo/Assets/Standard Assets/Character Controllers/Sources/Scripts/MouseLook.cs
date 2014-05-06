@@ -46,26 +46,31 @@ public class MouseLook : MonoBehaviour {
 
 		float xInput = 0;
 		float yInput = 0;
+//
+//		if (frame.Hands.Count > currentHandCount) {
+//			handJustEntered = true;
+//			currentHandCount = frame.Hands.Count;
+//		} else if (frame.Hands.Count < currentHandCount) {
+//			usingCorrectHand = false;
+//			currentHandCount = frame.Hands.Count;
+//			Debug.Log("Hand removed from the interaction box [" + currentHandCount + "]");
+//		}
 
-		if (frame.Hands.Count > currentHandCount) {
-			handJustEntered = true;
-			currentHandCount = frame.Hands.Count;
-		} else if (frame.Hands.Count < currentHandCount) {
-			Debug.Log("Hand removed from the interaction box");
-			usingCorrectHand = false;
-			currentHandCount = frame.Hands.Count;
-		}
+//		if (handJustEntered) {
+//			Debug.Log("New hand just entered the interaction box");
+//			handJustEntered = false;
+//
+//			// First check if the correct hand is being used
+//			Handedness handedness = Util.GetHandedness(frame.Hands[currentHandCount - 1]);
+//			
+//			usingCorrectHand = leftHanded && handedness == Handedness.RIGHT || !leftHanded && handedness == Handedness.LEFT;
+//			Debug.Log("Correct hand: " + usingCorrectHand);
+//		}
 
-		if (handJustEntered) {
-			Debug.Log("New hand just entered the interaction box");
-			handJustEntered = false;
+		// First check if the correct hand is being used
+		Handedness handedness = Util.GetHandedness(frame.Hands[currentHandCount - 1]);
 
-			// First check if the correct hand is being used
-			Handedness handedness = Util.GetHandedness(frame.Hands[currentHandCount - 1]);
-			
-			usingCorrectHand = leftHanded && handedness == Handedness.RIGHT || !leftHanded && handedness == Handedness.LEFT;
-			Debug.Log("Correct hand: " + usingCorrectHand);
-		}
+		usingCorrectHand = leftHanded && handedness == Handedness.RIGHT || !leftHanded && handedness == Handedness.LEFT;
 
 		if (usingCorrectHand) {
 			// Calculate average finger velocity
