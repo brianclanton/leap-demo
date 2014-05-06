@@ -9,6 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using Leap;
+using System.Collections.Generic;
 
 namespace Leap {
 	
@@ -40,5 +41,64 @@ namespace Leap {
 																		 v.y * InputScale.y,
 																		 v.z * InputScale.z ); }
 		private static Vector3 Offset( Vector3 v ) { return v + InputOffset; }
+	}
+
+	public enum Handedness{ LEFT, RIGHT, UNKNOWN };
+
+	public static class Util {
+
+		public static Vector3 ToVector3(Vector v) {
+			return new Vector3(v.x, v.y, v.z);
+		}
+
+		public static Handedness GetHandedness(Hand hand) {
+			// Can't tell handness if the hand has no fingers
+			if (hand.Fingers.Count == 0)
+				return Handedness.UNKNOWN;
+
+			Vector handXBasis = hand.PalmNormal.Cross(hand.Direction).Normalized;
+			Vector handYBasis = -hand.PalmNormal;
+			Vector handZBasis = -hand.Direction;
+			Vector handOrigin = hand.PalmPosition;
+			Matrix handTransform = new Matrix(handXBasis, handYBasis, handZBasis, handOrigin).RigidInverse();
+			float avgDist = 0;
+			int fingerCount = 0;
+
+			List<Vector> transformedFingers = new List<Vector>();
+
+			foreach (Finger finger in hand.Fingers) {
+				Vector transformedPosition = handTransform.TransformPoint(finger.TipPosition);
+				Vector transformedDirection = handTransform.TransformPoint(finger.Direction);
+
+				transformedFingers.Add(transformedPosition);
+				avgDist += transformedPosition.z - handOrigin.z;
+				fingerCount++;
+			}
+
+			avgDist /= fingerCount;
+			fingerCount = 0;
+
+			Vector leftmostFingerVector = null;
+			Vector rightmostFingerVector = null;
+
+			foreach (Finger finger in hand.Fingers) {
+				Vector transformedPosition = transformedFingers[fingerCount];
+
+				if (leftmostFingerVector == null || transformedPosition.x < leftmostFingerVector.x)
+					leftmostFingerVector = transformedPosition;
+				if (rightmostFingerVector == null || transformedPosition.x > rightmostFingerVector.x)
+					rightmostFingerVector = transformedPosition;
+
+				fingerCount++;
+			}
+
+			if (leftmostFingerVector.z - handOrigin.z < avgDist * 0.55f && rightmostFingerVector.z - handOrigin.z < avgDist * 0.55f)
+				return Handedness.UNKNOWN;
+			if (leftmostFingerVector.z > rightmostFingerVector.z)
+				return Handedness.RIGHT;
+			else
+				return Handedness.LEFT;
+		}	
+
 	}
 }
