@@ -11,6 +11,7 @@ public class LeapReadout : MonoBehaviour {
 	private GUIText fingers;
 	private GUIText pointables;
 	private GUIText gestures;
+	private GUIText whichHand;
 
 	private float baseOffsetX = 0.95f;
 	private float baseOffsetY = 0.95f;
@@ -33,6 +34,7 @@ public class LeapReadout : MonoBehaviour {
 		fingers = GetGUIText("Fingers");
 		pointables = GetGUIText("Pointables");
 		gestures = GetGUIText("Gestures");
+		whichHand = GetGUIText("WhichHand");
 	}
 	
 	// Update is called once per frame
@@ -62,6 +64,14 @@ public class LeapReadout : MonoBehaviour {
 				for (int i = 0; i < frame.Gestures().Count; i++)
 					gestures.text += frame.Gestures()[i].Type + ", ";
 			}
+
+			if (frame.Hands.Count == 1)
+				whichHand.text = "" + Util.GetHandedness(frame.Hands[0]);
+			else
+				whichHand.text = "No hands detected";
+//			whichHand.text = "";
+//			for (int i = 0; i < frame.Hands.Count; i++)
+//				whichHand.text += frame.Hands[i].Id;
 				
 		}
 	}
